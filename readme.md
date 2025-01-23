@@ -58,9 +58,4 @@ The **Trips Web App** is a full-stack application designed to help admins manage
 
 ## How to Run the Project Locally
 
-### Prerequisites
-- [Node.js](https://nodejs.org/) (v16 or higher)
-- [npm](https://www.npmjs.com/) (comes with Node.js)
-- [MongoDB](https://www.mongodb.com/) (or a free-tier MongoDB Atlas account)
-
 ### Setup - to be completed
