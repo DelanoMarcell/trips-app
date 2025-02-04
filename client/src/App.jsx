@@ -15,7 +15,7 @@ function App() {
     <Router>
     <Routes>
       {/* Define your routes here */}
-      <Route path="/" element={<Home/>} />
+      <Route path="/home" element={<Home/>} />
       <Route path="/about" element={<About />} />
       <Route path="/dashboard" element={<Dashboard />} />
       <Route path="/create-trip" element={<CreateTrip />} />

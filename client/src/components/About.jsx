@@ -1,9 +1,9 @@
 import { Fragment } from 'react';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { useNavigate } from 'react-router-dom'; 
 
 
 function About() {
-    const navigate = useNavigate(); // useNavigate hook for programmatic navigation
+    const navigate = useNavigate(); 
 
 
 
@@ -34,7 +34,7 @@ function About() {
         <h1>Admin dashboard
           </h1>
 
-      <button onClick={() => navigate('/')}>Go to Home</button>
+      <button onClick={() => navigate('/home')}>Go to Home</button>
 
       </Fragment>
 
