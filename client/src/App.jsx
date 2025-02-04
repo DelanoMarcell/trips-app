@@ -6,6 +6,8 @@ import './App.css'
 
 import Home from './components/Home'
 import About from './components/About'
+import Dashboard from './pages/admin/Dashboard'
+import CreateTrip from './pages/admin/CreateTrips'
 
 function App() {
 
@@ -15,6 +17,8 @@ function App() {
       {/* Define your routes here */}
       <Route path="/" element={<Home/>} />
       <Route path="/about" element={<About />} />
+      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/create-trip" element={<CreateTrip />} />
     </Routes>
   </Router>
   );
