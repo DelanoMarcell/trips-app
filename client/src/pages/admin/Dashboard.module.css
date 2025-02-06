@@ -1,0 +1,33 @@
+.dashboardContainer {
+    display: flex;
+    min-height: 100vh;
+  }
+  
+  .mainContent {
+    flex: 1;
+    margin-left: 250px; /* Match sidebar width */
+    padding: 2rem;
+    background-color: #f5f6fa;
+  }
+  
+  .title {
+    color: #2c3e50;
+    margin-bottom: 2rem;
+  }
+  
+  .gridContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    gap: 2rem;
+  }
+  
+  .section {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 10px;
+    box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+  }
+  
+  /* Add the rest of the CSS styles from the previous AdminDashboard.module.css */
+  /* Include all the styles from the previous answer starting from .section h2 */
+  /* Make sure to copy all the remaining styles from the previous CSS example */

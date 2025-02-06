@@ -8,6 +8,8 @@ import Home from './components/Home'
 import About from './components/About'
 import Login from './components/auth/Login'
 import Registration from './components/auth/Register'
+import Dashboard from './pages/admin/Dashboard'
+import CreateTrip from './pages/admin/CreateTrips'
 
 function App() {
 
@@ -19,6 +21,8 @@ function App() {
       <Route path="/about" element={<About />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Registration />} />
+      <Route path="/dashboard" element={<Dashboard />} />
+      <Route path="/create-trip" element={<CreateTrip />} />
     </Routes>
   </Router>
   );
