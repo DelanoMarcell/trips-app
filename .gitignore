@@ -5,3 +5,6 @@ client/dist/
 
 # Ignore .env file
 .env
+
+#Ignore my notes txt file
+notes.txt

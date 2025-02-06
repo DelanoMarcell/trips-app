@@ -6,6 +6,8 @@ import './App.css'
 
 import Home from './components/Home'
 import About from './components/About'
+import Login from './components/auth/Login'
+import Registration from './components/auth/Register'
 
 function App() {
 
@@ -15,6 +17,8 @@ function App() {
       {/* Define your routes here */}
       <Route path="/home" element={<Home/>} />
       <Route path="/about" element={<About />} />
+      <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Registration />} />
     </Routes>
   </Router>
   );
