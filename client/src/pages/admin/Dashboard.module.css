@@ -5,7 +5,7 @@
   
   .mainContent {
     flex: 1;
-    margin-left: 250px; /* Match sidebar width */
+    margin-left: 250px; 
     padding: 2rem;
     background-color: #f5f6fa;
   }
@@ -28,6 +28,3 @@
     box-shadow: 0 2px 15px rgba(0,0,0,0.1);
   }
   
-  /* Add the rest of the CSS styles from the previous AdminDashboard.module.css */
-  /* Include all the styles from the previous answer starting from .section h2 */
-  /* Make sure to copy all the remaining styles from the previous CSS example */

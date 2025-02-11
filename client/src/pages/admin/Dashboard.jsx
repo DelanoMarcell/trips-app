@@ -25,14 +25,14 @@ function Dashboard() {
       user: 'User 1',
       email: 'useremail',
       rideId: 1,
-      message: 'Can I join with 2 luggage items?'
     }
   
   ]);
 
   const handleRequestAction = (requestId, action) => {
     setRequests(requests.filter(request => request.id !== requestId));
-    // Add API call here to handle the action
+
+    
   };
 
   return (

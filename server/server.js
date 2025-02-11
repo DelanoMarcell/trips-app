@@ -17,7 +17,8 @@ const PORT = process.env.PORT || 5000;
 // ======================
 app.use(
   cors({
-    origin: "http://localhost:5173", // Allow requests from Vite
+    origin: "http://localhost:4173", // Allow requests from Vite
+    
   })
 );
 app.use(express.json()); // Parse JSON bodies
@@ -27,6 +28,9 @@ app.use(express.json()); // Parse JSON bodies
 // ======================
 const authRoutes = require("./routes/auth");
 app.use("/api/auth", authRoutes);
+
+const tripRoutes = require("./routes/tripCreation");
+app.use("/api/trips", tripRoutes);
 
 // ======================
 // 4. Production Configuration (Serving React Frontend)
@@ -71,6 +75,7 @@ async function startServer() {
     console.log(`Server running on http://localhost:${PORT}`);
   });
 }
+
 
 // Start the server
 startServer();

@@ -10,7 +10,8 @@ import Login from './components/auth/Login'
 import Registration from './components/auth/Register'
 import Dashboard from './pages/admin/Dashboard'
 import CreateTrip from './pages/admin/CreateTrips'
-
+import ManageTrips from './pages/admin/ManageTrips'
+import Requests from './pages/admin/TripRequest'
 function App() {
 
   return(

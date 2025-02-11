@@ -11,4 +11,5 @@ router.get("/verify/:token", (req, res) =>
   authController.verifyEmail(req, res)
 );
 
+
 module.exports = router;

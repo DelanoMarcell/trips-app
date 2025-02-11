@@ -9,7 +9,7 @@ const SideNav = () => {
   const menuItems = [
     {
       name: 'General',
-      path: '/general',
+      path: '/dashboard',
       icon: <FiSettings className={styles.icon} />
     },
     {
