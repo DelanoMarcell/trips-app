@@ -1,13 +1,13 @@
 .createTripContainer {
+    display: flex;
     padding: 2rem;
-    margin-left: 250px; /* Match sidebar width */
+    min-width: 100vw;
     min-height: 100vh;
-    background-color: #f5f6fa;
+    justify-content: center;
   }
   
   .formWrapper {
-    max-width: 800px;
-    margin: 0 auto;
+    max-width: 100vw;
     background: white;
     padding: 2rem;
     border-radius: 10px;

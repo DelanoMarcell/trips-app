@@ -64,9 +64,10 @@ const CreateTrip = () => {
 
   return (
     <div className='pageContainr'>
-      <SideNav/>
 
       <div className={styles.createTripContainer}>
+      <SideNav/>
+
         <div className={styles.formWrapper}>
           <h1 className={styles.header}>
             <FiPlusCircle className={styles.headerIcon} />

@@ -1,0 +1,5 @@
+.dashboardContainer {
+    display: flex;
+    min-height: 100vh;
+    left: 10;
+  }
