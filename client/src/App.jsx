@@ -12,6 +12,7 @@ import Dashboard from './pages/admin/Dashboard'
 import CreateTrip from './pages/admin/CreateTrips'
 import ManageTrips from './pages/admin/ManageTrips'
 import Requests from './pages/admin/TripRequest'
+import ProtectedRoute from './components/ProtectedAdminRoute'
 function App() {
 
   return(
@@ -22,7 +23,7 @@ function App() {
       <Route path="/about" element={<About />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Registration />} />
-      <Route path="/dashboard" element={<Dashboard />} />
+      <ProtectedRoute path="/dashboard" component={Dashboard} requiredRole="admin" />
       <Route path="/create-trip" element={<CreateTrip />} />
     </Routes>
   </Router>

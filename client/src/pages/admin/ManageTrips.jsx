@@ -14,3 +14,5 @@ function ManageTrips(){
         
     )
 }
+
+export default ManageTrips;

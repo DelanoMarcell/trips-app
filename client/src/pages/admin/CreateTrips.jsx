@@ -23,7 +23,6 @@ const CreateTrip = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Add API call here
 
     //create a request to save thee data in the backend
     
