@@ -38,7 +38,7 @@ if (process.env.NODE_ENV === "production") {
   console.log(
     "Production environment detected. Serving frontend from the build folder."
   );
-  app.use(express.static(path.join(__dirname, "../client/dist")));
+  app.use(express.static(path.join(__dirname, "/public/dist")));
 
   // Handle React routing, return all requests to React app
   app.get("*", (req, res) => {
