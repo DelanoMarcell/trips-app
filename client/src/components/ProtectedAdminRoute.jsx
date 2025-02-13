@@ -1,22 +1,18 @@
-import React from 'react';
-import { Route, Navigate } from 'react-router-dom';
+import { Navigate, Outlet } from 'react-router-dom';
 
-const ProtectedRoute = ({ element: Component, requiredRole, ...rest }) => {
-
-
-
-  const isAuthenticated = false;
-  const userRole = 'admin'
+const ProtectedRoute = ({ requiredRole }) => {
+  const isAuthenticated = "true"; //localStorage.getItem('isAuthenticated');
+  const userRole = "admin"; 
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/login" replace />;
   }
 
   if (requiredRole && userRole !== requiredRole) {
-    return <Navigate to="/home" />;
+    return <Navigate to="/home" replace />;
   }
 
-  return <Route {...rest} element={Component} />;
+  return <Outlet />;
 };
 
-export default ProtectedRoute;
+export default ProtectedRoute

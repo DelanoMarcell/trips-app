@@ -9,8 +9,6 @@ function Dashboard() {
 
   async function getActiveRides(){
 
-
-
     //fetch all the trips the admin has created
     //include their key as a query parameter
 
