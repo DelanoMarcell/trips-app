@@ -50,6 +50,8 @@ function Dashboard() {
 
   ]);
 
+  
+
 
   //get 3 most frequent requests to join a ride
   async function getJoinRequests(){
