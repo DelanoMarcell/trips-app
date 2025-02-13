@@ -26,7 +26,6 @@ const CreateTrip = () => {
 
     //create a request to save thee data in the backend
     
-
     fetch("http://localhost:5000/api/trips/tripcreate", {
       method: "POST",
       body: JSON.stringify({

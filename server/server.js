@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 5000;
 // ======================
 app.use(
   cors({
-    origin: "http://localhost:4173", // Allow requests from Vite
+    origin: "http://localhost:5173",  // Allow requests from Vite
     
   })
 );
