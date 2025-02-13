@@ -11,9 +11,20 @@ router.post("/login", (req, res) => authController.login(req, res));
 
 router.get("/logout", (req, res) => authController.logout(req, res));
 
+router.post("/new-verification-link", (req, res) =>
+  authController.newVerificationLink(req, res)
+);
+
+router.post("/request-reset", (req, res) =>
+  authController.requestreset(req, res)
+);
+
+router.post("/verify-reset-code", (req, res) =>
+  authController.verifyresetcode(req, res)
+);
+
 router.get("/verify/:token", (req, res) =>
   authController.verifyEmail(req, res)
 );
-
 
 module.exports = router;

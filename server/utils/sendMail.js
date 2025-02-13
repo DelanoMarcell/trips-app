@@ -1,4 +1,4 @@
-const sendEmailVerification = async (name, email, link) => {
+const sendEmailVerification = async (name, email, link, code, type) => {
   fetch(process.env.P_AUTOMATE_LINK, {
     method: "POST",
     headers: {
@@ -8,13 +8,15 @@ const sendEmailVerification = async (name, email, link) => {
       name: name,
       email: email,
       link: link,
+      code: code,
+      type: type, //'reset-request / email-verification'
     }),
   })
     .then((response) => {
       if (response.ok) {
-        console.log("Successfully sent email verification email. ");
+        console.log("Successfully sent email ");
       } else {
-        console.log("Failed to send email verification email.  ");
+        console.log("Failed to send email ");
       }
 
       console.log(response);

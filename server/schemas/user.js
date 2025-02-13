@@ -26,6 +26,9 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false, // Default value is false
   },
+  resetCode: {
+    type: String,
+  },
 });
 
 const User = mongoose.model("User", userSchema);

@@ -4,6 +4,14 @@ const jwt = require("jsonwebtoken");
 
 const { sendEmailVerification } = require("../utils/sendMail");
 
+const getBaseUrl = () => {
+  if (process.env.NODE_ENV === "development") {
+    return process.env.LOCAL_URL; // Local URL for development
+  } else {
+    return process.env.AZURE_URL; // Azure URL for production
+  }
+};
+
 exports.register = async (req, res) => {
   try {
     const { name, surname, password, email, role } = req.body;
@@ -38,9 +46,15 @@ exports.register = async (req, res) => {
       { expiresIn: 60 * 60 * 1000 }
     );
 
-    const resetLink = `http://localhost:5000/api/auth/verify/${token}`;
+    const resetLink = `${getBaseUrl()}/api/auth/verify/${token}`;
 
-    await sendEmailVerification(name, email, resetLink);
+    await sendEmailVerification(
+      name,
+      email,
+      resetLink,
+      "",
+      "email-verification"
+    );
 
     return res.status(200).json({ message: "Registration successful" });
   } catch (error) {
@@ -110,6 +124,106 @@ exports.logout = (req, res) => {
   return res.redirect("/login");
 };
 
+exports.newVerificationLink = async (req, res) => {
+  const { email } = req.body;
+
+  //Find the user associated with email, generate jwt, generate reset link, send email
+  const user = await User.findOne({
+    email: email,
+  });
+
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
+  }
+
+  const name = user.name;
+
+  //Generate a jwt token for the email verification link and set an hour expiration
+  const token = jwt.sign(
+    {
+      email: email,
+      name: name,
+    },
+    process.env.JWT_SECRET,
+    { expiresIn: 60 * 60 * 1000 }
+  );
+
+  const resetLink = `${getBaseUrl()}/api/auth/verify/${token}`;
+
+  await sendEmailVerification(name, email, resetLink, "", "email-verification");
+
+  res.status(200).json({ message: "Verification link sent to your email" });
+};
+
+exports.requestreset = async (req, res) => {
+  const { email } = req.body;
+
+  // Generate a 6-digit random code
+  const resetCode = Math.floor(100000 + Math.random() * 900000).toString();
+
+  //Get the persons name based on the email
+  const user = await User.findOne({
+    email: email,
+  });
+
+  if (!user) {
+    return res.status(404).json({ error: "User not found" });
+  }
+
+  const name = user.name;
+
+  // Store the reset code in the database by updating the user field // Expires in 10 mins
+  await User.findOneAndUpdate(
+    { email: email },
+    { resetCode: resetCode, expireCode: Date.now() + 10 * 60 * 1000 }
+  );
+
+  // Send the reset code via email
+  await sendEmailVerification(name, email, "", resetCode, "reset-request");
+
+  res.status(200).json({ message: "Reset code sent to your email" });
+};
+
+exports.verifyresetcode = async (req, res) => {
+  const { email, resetCode, newPassword } = req.body;
+
+  try {
+    // Find the user by email
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ error: "User not found" });
+    }
+
+    // Check if the reset code is correct and not expired
+    if (!user.resetCode || user.resetCode !== resetCode) {
+      return res.status(400).json({ error: "Invalid reset code" });
+    }
+
+    if (Date.now() > user.expireCode) {
+      return res.status(400).json({ error: "Reset code has expired" });
+    }
+
+    // Hash the new password
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    // Update the user's password
+    await User.findOneAndUpdate(
+      { email: email },
+      { password: hashedPassword, resetCode: "", expireCode: "" }
+    );
+
+    res.status(200).json({
+      message: "Your password has been reset successfully. Please login.",
+    });
+  } catch (error) {
+    console.error("Error verifying reset code:", error);
+    res
+      .status(500)
+      .json({ error: "An error occurred while verifying the reset code" });
+  }
+};
+
 exports.verifyEmail = async (req, res) => {
   try {
     const token = req.params.token;
@@ -138,7 +252,7 @@ exports.verifyEmail = async (req, res) => {
     user.verified = true;
     await user.save();
 
-    return res.status(200).json({ message: "User verified successfully" });
+    return res.status(200).json({ message: "Email verified successfully" });
   } catch (error) {
     res.status(500).json({
       error:
