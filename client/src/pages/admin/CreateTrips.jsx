@@ -2,12 +2,15 @@ import React, { useState } from 'react';
 import { FiMapPin, FiClock, FiPlusCircle } from 'react-icons/fi';
 import styles from './CreateTrip.module.css';
 import SideNav from '../../components/admin_only/Sidebar';
-
+import Cookies from 'js-cookie';
 const CreateTrip = () => {
+
+  const adminEmail = Cookies.get('email');
+
+
   const [formData, setFormData] = useState({
 
-    //trip by : The admin creating the trip
-    tripBy: 'admin',
+    tripBy: adminEmail,
     tripName: '',
     from: '',
     to: '',
@@ -41,7 +44,7 @@ const CreateTrip = () => {
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 3000);
     setFormData({
-      tripBy: 'admin',
+      tripBy: '',
       tripName: '',
       from: '',
       to: '',
@@ -62,7 +65,6 @@ const CreateTrip = () => {
   };
 
   return (
-    <div className='pageContainr'>
 
       <div className={styles.createTripContainer}>
       <SideNav/>
@@ -154,7 +156,6 @@ const CreateTrip = () => {
           </form>
         </div>
       </div>
-    </div>
   );
 };
 

@@ -1,8 +1,15 @@
 import { Navigate, Outlet } from 'react-router-dom';
+import Cookies from 'js-cookie';
+
+
 
 const ProtectedRoute = ({ requiredRole }) => {
-  const isAuthenticated = "true"; //localStorage.getItem('isAuthenticated');
-  const userRole = "admin"; 
+
+  const isAuthenticated = Cookies.get('role') !== undefined && Cookies.get('role') !== null;
+  const userRole = Cookies.get('role');  
+
+
+
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;

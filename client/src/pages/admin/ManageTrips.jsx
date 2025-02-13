@@ -16,8 +16,8 @@ import {
   Box
 } from '@mui/material';
 import { Edit as EditIcon, Save as SaveIcon, Cancel as CancelIcon } from '@mui/icons-material';
-
-
+import SideNav from '../../components/admin_only/Sidebar';
+import styles from './ManageTrips.module.css';
 
 const initialTrips = [
   {
@@ -66,7 +66,8 @@ const TripsManagement = () => {
   };
 
   return (
-    <div className='mainContainer'>
+    <div className={styles.mainContainer}>
+      <SideNav />
     <Container maxWidth="lg">
       <Box my={4}>
         <Typography variant="h4" component="h1" gutterBottom>
