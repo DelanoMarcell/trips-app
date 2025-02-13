@@ -27,6 +27,9 @@ app.use(express.json()); // Parse JSON bodies
 const authRoutes = require("./routes/auth");
 app.use("/api/auth", authRoutes);
 
+const tripRoutes = require("./routes/tripCreation");
+app.use("/api/trips", tripRoutes);
+
 // ======================
 // 4. Production Configuration (Serving React Frontend)
 // ======================

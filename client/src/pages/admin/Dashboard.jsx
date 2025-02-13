@@ -4,7 +4,40 @@ import SideNav from "../../components/admin_only/Sidebar";
 import styles from './Dashboard.module.css';
 
 function Dashboard() {
-  // Mock data - replace with API calls
+
+  //fetch data from the API
+
+  async function getActiveRides(){
+
+
+
+    //fetch all the trips the admin has created
+    //include their key as a query parameter
+
+
+    //TODO  change to actual admin key
+    const adminKey = "adminKey";
+
+    const url = `https://localhost:5000/api/trips?admin=${adminKey}`;
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Response status: ${response.status}`);
+      }
+  
+
+      //backend should return a json of array containing the ride information for the specific admin
+      const json = await response.json();
+      console.log(json);
+    } catch (error) {
+      console.error(error.message);
+    }
+
+    //return a json of array containing the ride information for the specific admin 
+
+
+  }
+
   const [rides, setRides] = useState([
     {
       id: 1,
@@ -21,20 +54,47 @@ function Dashboard() {
 
   
 
+
+  //get 3 most frequent requests to join a ride
+  async function getJoinRequests(){
+
+
+
+    const adminKey = "adminKey";
+
+    const url = `https://localhost:5000/api/trips?admin=${adminKey}`;
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        throw new Error(`Response status: ${response.status}`);
+      }
+  
+
+      //backend should return a json of array containing the ride information for the specific admin
+      const json = await response.json();
+      console.log(json);
+    } catch (error) {
+      console.error(error.message);
+    }
+
+
+
+  }
+
   const [requests, setRequests] = useState([
     {
       id: 1,
       user: 'User 1',
       email: 'useremail',
       rideId: 1,
-      message: 'Can I join with 2 luggage items?'
     }
   
   ]);
 
   const handleRequestAction = (requestId, action) => {
     setRequests(requests.filter(request => request.id !== requestId));
-    // Add API call here to handle the action
+
+    
   };
 
   return (
@@ -47,17 +107,17 @@ function Dashboard() {
         <div className={styles.gridContainer}>
           {/* Existing Rides Section */}
           <div className={styles.section}>
-            <h2><FiMapPin /> Active Rides</h2>
+            <h2 className="text"><FiMapPin /> Active Rides</h2>
             <div className={styles.ridesGrid}>
               {rides.map(ride => (
                 <div key={ride.id} className={styles.rideCard}>
                   <div className={styles.rideHeader}>
                     <span className={styles.statusIndicator} data-status={ride.status} />
-                    <h3>{ride.start} → {ride.end}</h3>
+                    <h3 className="text">{ride.start} → {ride.end}</h3>
                   </div>
                   <div className={styles.rideDetails}>
-                    <p><FiClock /> {ride.date} at {ride.time}</p>
-                    <p>Seats available: {ride.seats}</p>
+                    <p className="text"><FiClock /> {ride.date} at {ride.time}</p>
+                    <p className="text">Seats available: {ride.seats}</p>
                   </div>
                 </div>
               ))}

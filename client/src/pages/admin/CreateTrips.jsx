@@ -1,35 +1,57 @@
 import React, { useState } from 'react'; 
-import { FiMapPin, FiClock, FiDollarSign, FiPlusCircle } from 'react-icons/fi';
+import { FiMapPin, FiClock, FiPlusCircle } from 'react-icons/fi';
 import styles from './CreateTrip.module.css';
 import SideNav from '../../components/admin_only/Sidebar';
 
 const CreateTrip = () => {
   const [formData, setFormData] = useState({
+
+    //trip by : The admin creating the trip
+    tripBy: 'admin',
     tripName: '',
     from: '',
     to: '',
     departure: '',
     cost: '',
-    seatsAvailable: '', // Added state for seats available
-    notes: ''
+    seatsAvailable: '',
+    joinRequest : [],
+    acceptedRequest : []
+    
   });
 
   const [showSuccess, setShowSuccess] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Add API call here
+
+    //create a request to save thee data in the backend
+    
+
+    fetch("http://localhost:5000/api/trips/tripcreate", {
+      method: "POST",
+      body: JSON.stringify({
+        ...formData
+      }),
+      headers: {
+        "Content-type": "application/json; charset=UTF-8"
+      }
+    });
+
+
     console.log('Trip created:', formData);
     setShowSuccess(true);
     setTimeout(() => setShowSuccess(false), 3000);
     setFormData({
+      tripBy: 'admin',
       tripName: '',
       from: '',
       to: '',
       departure: '',
       cost: '',
-      seatsAvailable: '', // Reset seats available
-      notes: ''
+      seatsAvailable: '', 
+      joinRequest : [],
+      acceptedRequest : []
+      
     });
   };
 
@@ -42,9 +64,10 @@ const CreateTrip = () => {
 
   return (
     <div className='pageContainr'>
-      <SideNav/>
 
       <div className={styles.createTripContainer}>
+      <SideNav/>
+
         <div className={styles.formWrapper}>
           <h1 className={styles.header}>
             <FiPlusCircle className={styles.headerIcon} />
