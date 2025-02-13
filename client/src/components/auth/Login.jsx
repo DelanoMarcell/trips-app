@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { IconButton } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
   Box,
   TextField,
@@ -58,6 +60,7 @@ const AuthContainer = ({ children, title }) => (
           {title}
         </Typography>
 
+        {/* Alert container */}
         <div id="alert"></div>
 
         {children}
@@ -72,11 +75,14 @@ export function Login() {
     password: ""
   });
   const [isLoading, setIsLoading] = useState(false);
+  const [showResend, setShowResend] = useState(false); // NEW: State to conditionally show the resend button
   const navigate = useNavigate();
 
   const handleChange = (e) => {
     setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
+
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -98,10 +104,12 @@ export function Login() {
       .then((data) => {
         if (data.error && data.error === "Invalid email or password.") {
           document.getElementById("alert").innerHTML = `<p style='padding: 10px; background-color: #ffebee; color: #c62828; border: 1px solid #ef9a9a; border-radius: 4px;'>Invalid email or password.</p>`;
-        }
-          else if(data.error && data.error === "Please verify your email before logging in.") {
-            document.getElementById("alert").innerHTML = `<p style='padding: 10px; background-color: #ffebee; color: #c62828; border: 1px solid #ef9a9a; border-radius: 4px;'>Please verify your email before logging in.</p>`;
-          
+        } else if (
+          data.error &&
+          data.error === "Please verify your email before logging in."
+        ) {
+          document.getElementById("alert").innerHTML = `<p style='padding: 10px; background-color: #ffebee; color: #c62828; border: 1px solid #ef9a9a; border-radius: 4px;'>Please verify your email before logging in.</p>`;
+          setShowResend(true); // Show the resend verification button
         } else if (data.message && data.message === "Login successful") {
           document.getElementById("alert").innerHTML = `<p style='padding: 10px; background-color: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; border-radius: 4px;'>Login successful</p>`;
           // Redirect after a brief delay
@@ -115,6 +123,34 @@ export function Login() {
         console.error("Error logging in:", error);
         document.getElementById("alert").innerHTML =
           "<p style='padding: 10px; background-color: #ffebee; color: #c62828; border: 1px solid #ef9a9a; border-radius: 4px;'>Error logging in. Please try again later.</p>";
+        setIsLoading(false);
+      });
+  };
+
+  // NEW: Function to handle requesting a new verification link
+  const handleRequestNewVerificationLink = () => {
+    setIsLoading(true);
+
+    fetch("/api/auth/new-verification-link", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email: formData.email })
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.error) {
+          document.getElementById("alert").innerHTML = `<p style='padding: 10px; background-color: #ffebee; color: #c62828; border: 1px solid #ef9a9a; border-radius: 4px;'>${data.error}</p>`;
+        } else if (data.message) {
+          document.getElementById("alert").innerHTML = `<p style='padding: 10px; background-color: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; border-radius: 4px;'>${data.message}</p>`;
+          // Optionally hide the button after a successful request
+          setShowResend(false);
+        }
+        setIsLoading(false);
+      })
+      .catch((error) => {
+        console.error("Error requesting new verification link:", error);
+        document.getElementById("alert").innerHTML =
+          "<p style='padding: 10px; background-color: #ffebee; color: #c62828; border: 1px solid #ef9a9a; border-radius: 4px;'>Error requesting new verification link. Please try again later.</p>";
         setIsLoading(false);
       });
   };
@@ -143,7 +179,7 @@ export function Login() {
         <TextField
           fullWidth
           label="Password"
-          type="password"
+          type={showPassword ? "text" : "password"}
           variant="filled"
           margin="normal"
           name="password"
@@ -151,6 +187,16 @@ export function Login() {
             startAdornment: (
               <InputAdornment position="start">
                 <LockOutlined color="primary" />
+              </InputAdornment>
+            ),
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  edge="end"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                >
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
               </InputAdornment>
             )
           }}
@@ -162,7 +208,24 @@ export function Login() {
         <Box textAlign="right" mt={1}>
           <Link
             to="/forgotpassword"
-            style={{ color: "#1976d2", textDecoration: "none" }}
+            style={{
+              display: "inline-block",
+              padding: "2px 8px",
+              color: "#1976d2",
+              borderRadius: "8px",
+              textDecoration: "none",
+              transition: "background-color 0.3s, color 0.3s",
+              border: "1px solid #1976d2",
+              textAlign: "center"
+            }}
+            onMouseOver={(e) => {
+              e.target.style.backgroundColor = "#1976d2";
+              e.target.style.color = "#fff";
+            }}
+            onMouseOut={(e) => {
+              e.target.style.backgroundColor = "transparent";
+              e.target.style.color = "#1976d2";
+            }}
           >
             Reset Password
           </Link>
@@ -198,12 +261,67 @@ export function Login() {
           )}
         </Button>
 
+        {/* NEW: Conditionally render the button to request a new verification link */}
+        {showResend && (
+          <Button
+            fullWidth
+            variant="outlined"
+            size="large"
+            onClick={handleRequestNewVerificationLink}
+            disabled={isLoading}
+            sx={{
+              mt: 2,
+              py: 1.5,
+              fontWeight: 700,
+              borderRadius: 2,
+              position: "relative",
+              "&:hover": { boxShadow: 2 }
+            }}
+          >
+            Request New Verification Link
+            {isLoading && (
+              <LinearProgress
+                sx={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  height: 8,
+                  borderRadius: "inherit"
+                }}
+              />
+            )}
+          </Button>
+        )}
+
         <Divider sx={{ my: 3 }}>OR</Divider>
 
         <Box textAlign="center">
           <Typography variant="body2" sx={{ color: "text.secondary" }}>
             Don't have an account?{" "}
-            <Link to="/register" style={{ color: "#1976d2", textDecoration: "none" }}>
+            <Link
+              to="/register"
+              style={{
+                display: "inline-block",
+                padding: "8px 16px",
+                color: "#1976d2",
+                fontWeight: "bold",
+                borderRadius: "8px",
+                textDecoration: "none",
+                transition: "background-color 0.3s, color 0.3s",
+                border: "1px solid #1976d2",
+                textAlign: "center",
+                margin: "8px 0"
+              }}
+              onMouseOver={(e) => {
+                e.target.style.backgroundColor = "#1976d2";
+                e.target.style.color = "#fff";
+              }}
+              onMouseOut={(e) => {
+                e.target.style.backgroundColor = "transparent";
+                e.target.style.color = "#1976d2";
+              }}
+            >
               Create Account
             </Link>
           </Typography>

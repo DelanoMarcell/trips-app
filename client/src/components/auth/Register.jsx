@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { Link } from 'react-router-dom';
+import { IconButton } from "@mui/material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import {
   Box,
   TextField,
@@ -62,6 +64,9 @@ export function Registration() {
     role: "",
   });
 
+  const [showPassword, setShowPassword] = useState(false); // NEW: State to toggle password visibility
+
+
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
@@ -116,7 +121,7 @@ export function Registration() {
         }
 
         if(data.message && data.message === "Registration successful") {
-          document.getElementById('alert').innerHTML = "<p style='padding: 10px; background-color: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; border-radius: 4px;'>Registration successful. Please check your email to verify your account before attempting to login.</p>";
+          document.getElementById('alert').innerHTML = "<p style='padding: 10px; background-color: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; border-radius: 4px;'>Registration successful. Please check your email to verify your account.</p>";
           setFormData({
             name: "",
             surname: "",
@@ -124,6 +129,12 @@ export function Registration() {
             password: "",
             role: "",
           });
+
+          // Redirect to login page in 1 sec after successful registration
+          setTimeout(() => {
+            window.location.href = "/login";
+          }, 1000);
+
         }
 
         setIsLoading(false);
@@ -202,7 +213,7 @@ export function Registration() {
         <TextField
           fullWidth
           label="Password"
-          type="password"
+          type={showPassword ? "text" : "password"} // Modified: Toggle between text and password
           variant="filled"
           margin="normal"
           name="password"
@@ -212,6 +223,16 @@ export function Registration() {
                 <LockOutlined color="primary" />
               </InputAdornment>
             ),
+            endAdornment: ( // NEW: End adornment for password visibility toggle
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={() => setShowPassword(!showPassword)}
+                  edge="end"
+                >
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            )
           }}
           value={formData.password}
           onChange={handleChange}
@@ -261,9 +282,30 @@ export function Registration() {
         <Box textAlign="center" mt={3}>
           <Typography variant="body2" sx={{ color: 'text.secondary' }}>
             Already registered?{' '}
-            <Link to="/login">
-              Login
-            </Link>
+            <Link 
+  to="/login" 
+  style={{ 
+    display: "inline-block",
+    padding: "8px 16px",
+    color: "#1976d2",
+    fontWeight: "bold",
+    borderRadius: "8px",
+    textDecoration: "none",
+    transition: "background-color 0.3s, color 0.3s",
+    border: "1px solid #1976d2",
+  }}
+  onMouseOver={(e) => {
+    e.target.style.backgroundColor = "#1976d2";
+    e.target.style.color = "#fff";
+  }}
+  onMouseOut={(e) => {
+    e.target.style.backgroundColor = "transparent";
+    e.target.style.color = "#1976d2";
+  }}
+>
+  Login
+</Link>
+
           </Typography>
         </Box>
       </Box>
