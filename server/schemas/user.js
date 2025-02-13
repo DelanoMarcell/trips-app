@@ -17,13 +17,9 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  cellphone: {
-    type: Number,
-    required: true,
-  },
   role: {
     type: String,
-    enum: ["admin", "user"],
+    enum: ["Admin", "User"],
     required: true,
   },
   verified: {

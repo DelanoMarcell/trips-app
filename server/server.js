@@ -15,11 +15,10 @@ const PORT = process.env.PORT || 5000;
 // ======================
 // 2. Middleware Setup
 // ======================
-app.use(
-  cors({
-    origin: "http://localhost:5173", // Allow requests from Vite
-  })
-);
+app.use(cors());
+// {
+//   origin: "http://localhost:5173", // Allow requests from Vite
+// }
 app.use(express.json()); // Parse JSON bodies
 
 // ======================
