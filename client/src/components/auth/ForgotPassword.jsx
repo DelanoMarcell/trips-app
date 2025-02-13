@@ -66,22 +66,25 @@ const AuthContainer = ({ children, title }) => (
   </Container>
 );
 
-export function Login() {
-  const [formData, setFormData] = useState({
-    email: "",
-    password: ""
+export function ForgotPassword() {
+  const [formDataEmail, setFormDataEmail] = useState({
+    email: ""
+  });
+  const [formDataCode, setFormDataCode] = useState({
+    code: ""
   });
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    setFormData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    setFormDataEmail((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    setFormDataCode((prev) => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (!formData.email || !formData.password) {
+    if (!formDataEmail.email) {
       document.getElementById("alert").innerHTML =
         "<p style='padding: 10px; background-color: #ffebee; color: #c62828; border: 1px solid #ef9a9a; border-radius: 4px;'>Please fill in all fields</p>";
       return;
@@ -92,7 +95,7 @@ export function Login() {
     fetch("/api/auth/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(formData)
+      body: JSON.stringify(formDataEmail)
     })
       .then((response) => response.json())
       .then((data) => {
@@ -120,7 +123,7 @@ export function Login() {
   };
 
   return (
-    <AuthContainer title="Welcome Back">
+    <AuthContainer title="Forgot Password">
       <Box component="form" onSubmit={handleSubmit} sx={{ position: "relative" }}>
         <TextField
           fullWidth
@@ -135,38 +138,14 @@ export function Login() {
               </InputAdornment>
             )
           }}
-          value={formData.email}
+          value={formDataEmail.email}
           onChange={handleChange}
           required
         />
 
-        <TextField
-          fullWidth
-          label="Password"
-          type="password"
-          variant="filled"
-          margin="normal"
-          name="password"
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <LockOutlined color="primary" />
-              </InputAdornment>
-            )
-          }}
-          value={formData.password}
-          onChange={handleChange}
-          required
-        />
 
-        <Box textAlign="right" mt={1}>
-          <Link
-            to="/forgotpassword"
-            style={{ color: "#1976d2", textDecoration: "none" }}
-          >
-            Reset Password
-          </Link>
-        </Box>
+
+       
 
         <Button
           fullWidth
@@ -183,7 +162,7 @@ export function Login() {
             "&:hover": { boxShadow: 2 }
           }}
         >
-          Sign In
+          Send reset code
           {isLoading && (
             <LinearProgress
               sx={{
@@ -198,19 +177,12 @@ export function Login() {
           )}
         </Button>
 
-        <Divider sx={{ my: 3 }}>OR</Divider>
+       
 
-        <Box textAlign="center">
-          <Typography variant="body2" sx={{ color: "text.secondary" }}>
-            Don't have an account?{" "}
-            <Link to="/register" style={{ color: "#1976d2", textDecoration: "none" }}>
-              Create Account
-            </Link>
-          </Typography>
-        </Box>
+       
       </Box>
     </AuthContainer>
   );
 }
 
-export default Login;
+export default ForgotPassword;

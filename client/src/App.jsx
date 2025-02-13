@@ -10,6 +10,7 @@ import Login from './components/auth/Login'
 import Registration from './components/auth/Register'
 import Dashboard from './pages/admin/Dashboard'
 import CreateTrip from './pages/admin/CreateTrips'
+import ForgotPassword from './components/auth/forgotPassword'
 import ManageTrips from './pages/admin/ManageTrips'
 import TripsManagement from './pages/admin/ManageTrips'
 import Requests from './pages/admin/TripRequest'
@@ -24,6 +25,7 @@ function App() {
           <Route path="/home" element={<Home />} />
           <Route path="/about" element={<About />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/forgotpassword" element={<ForgotPassword/>} />
           <Route path="/register" element={<Registration />} />
           <Route path="/create-trip" element={<CreateTrip />} />
           <Route path="/manage-trips" element={<TripsManagement />} />

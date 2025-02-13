@@ -91,6 +91,13 @@ exports.login = async (req, res) => {
       maxAge: 3600000, // 1 hour in milliseconds
     });
 
+    //Set the role in a cookie but not secure
+    res.cookie("role", user.role, {
+      httpOnly: false, // Allows access via JavaScript
+      secure: false,
+      maxAge: 3600000,
+    });
+
     return res.status(200).json({ message: "Login successful" });
   } catch (error) {
     console.log("Error logging in user: ", error);
