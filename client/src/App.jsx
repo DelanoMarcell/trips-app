@@ -5,7 +5,7 @@ import About from './components/About';
 import Login from './components/auth/Login';
 import Registration from './components/auth/Register';
 import Dashboard from './pages/admin/Dashboard';
-import EmailVerified from './components/auth/VerificationSuccess';
+
 import CreateTrip from './pages/admin/CreateTrips';
 import ForgotPassword from './components/auth/forgotPassword'
 import ManageTrips from './pages/admin/ManageTrips';
@@ -21,7 +21,7 @@ function App() {
         <Route path="/about" element={<About />} />
         <Route path="/login" element={<Login />} />
           <Route path="/forgotpassword" element={<ForgotPassword/>} />
-          <Route path="/verificationsuccess" element={<EmailVerified/>} />
+       
 
         <Route path="/register" element={<Registration />} />
         <Route path="/register" element={<Registration />} />
