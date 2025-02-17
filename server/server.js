@@ -42,9 +42,7 @@ if (process.env.NODE_ENV === "production") {
 
   // Handle React routing, return all requests to React app
   app.get("*", (req, res) => {
-    return res.sendFile(
-      path.resolve(__dirname, "public", "dist", "index.html")
-    );
+    return res.sendFile(path.resolve(__dirname, "public", "index.html"));
   });
 }
 
