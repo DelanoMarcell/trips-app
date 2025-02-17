@@ -2,82 +2,68 @@ import React, { useState } from "react";
 import { FiMapPin, FiClock, FiUser, FiMail } from 'react-icons/fi';
 import SideNav from "../../components/admin_only/Sidebar";
 import styles from './Dashboard.module.css';
+import Cookies from 'js-cookie';
+import { useEffect } from "react";
+
 
 function Dashboard() {
 
   //fetch data from the API
-
-  async function getActiveRides(){
-
-    //fetch all the trips the admin has created
-    //include their key as a query parameter
+  const adminKey = Cookies.get('email');
 
 
-    //TODO  change to actual admin key
-    const adminKey = "adminKey";
 
-    const url = `https://localhost:5000/api/trips?admin=${adminKey}`;
+    const [rides, setRides] = useState([]);
+  const [error, setError] = useState(null);
+  const [joinRequests, setJoinRequests] = useState([]); // State to store join requests
+  const [joinErr, setJoinErr] = useState(null);  // State to store join requests error
+
+  // Function to fetch active rides
+  async function getActiveRides() {
+    
     try {
-      const response = await fetch(url);
+      const response = await fetch(`http://localhost:5000/api/trips/tripsavailable?admin=${adminKey}`);
       if (!response.ok) {
-        throw new Error(`Response status: ${response.status}`);
+        throw new Error('Failed to fetch trips');
       }
-  
-
-      //backend should return a json of array containing the ride information for the specific admin
-      const json = await response.json();
-      console.log(json);
+      const data = await response.json();
+      setRides(data);  // Update the state with the fetched data
+      let riders = data.map(ride => ride.requestToJoin);
     } catch (error) {
-      console.error(error.message);
+      setError(error.message);  // Set error if the fetch fails
     }
-
-    //return a json of array containing the ride information for the specific admin 
-
-
   }
 
-  const [rides, setRides] = useState([
-    {
-      id: 1,
-      start: 'From',
-      end: 'To',
-      date: '2024-03-20',
-      time: '08:00 AM',
-      driver: 'John Doe',
-      seats: 3,
-      status: 'active'
-    }
-
-  ]);
+  useEffect(() => {
+    getActiveRides();
+  }, []);  // Empty dependency array to run only once when the component mounts
 
   
+
+
 
 
   //get 3 most frequent requests to join a ride
-  async function getJoinRequests(){
-
-
-
-    const adminKey = "adminKey";
-
-    const url = `https://localhost:5000/api/trips?admin=${adminKey}`;
+  async function getJoinRequets() {
+    
     try {
-      const response = await fetch(url);
+      const response = await fetch(`http://localhost:5000/api/trips/tripsavailable?admin=${adminKey}`);
       if (!response.ok) {
-        throw new Error(`Response status: ${response.status}`);
+        throw new Error('Failed to fetch trips');
       }
-  
-
-      //backend should return a json of array containing the ride information for the specific admin
-      const json = await response.json();
-      console.log(json);
+      const data = await response.json();
+      setJoinRequests(data);  // Update the state with the fetched data
+      console.log(data);
     } catch (error) {
-      console.error(error.message);
+      setJoinErr(error.message);  // Set error if the fetch fails
     }
-
-
-
   }
+
+  useEffect(() => {
+    getJoinRequets();
+  }, []); 
+
+  
 
   const [requests, setRequests] = useState([
     {
@@ -111,11 +97,13 @@ function Dashboard() {
                 <div key={ride.id} className={styles.rideCard}>
                   <div className={styles.rideHeader}>
                     <span className={styles.statusIndicator} data-status={ride.status} />
-                    <h3 className="text">{ride.start} → {ride.end}</h3>
+                    <h3 className="text">{ride.from} → {ride.to}</h3>
                   </div>
                   <div className={styles.rideDetails}>
-                    <p className="text"><FiClock /> {ride.date} at {ride.time}</p>
-                    <p className="text">Seats available: {ride.seats}</p>
+                    <p className="text"><FiClock /> {ride.departure} </p>
+                    <p className="text">Seats available: {ride.seatsAvailable}</p>
+                    <p className="text">Cost: R{ride.cost}</p>
+
                   </div>
                 </div>
               ))}

@@ -30,20 +30,33 @@ exports.createTrip = async (req, res) => {
 
 }
 
+
+
 exports.tripsavailable = async (req, res) => {
+    try {
+        const admin = req.query.admin;
+        
+        if (!admin) {
+            return res.status(400).json({ 
+                error: 'Admin email is required' 
+            });
+        }
 
-    try{
-        const admin = "admin"
-
-        const trips = await Trip.find({tripBy: admin});
+        const trips = await Trip.find({ 
+            tripBy: admin,
+        }).select('-__v')  
+          .sort({ date: 1 });  
 
         res.json(trips);
 
-    } catch (e) {
-        console.error(e.message);
+    } catch (error) {
+        console.error('Error fetching trips:', error);
+        res.status(500).json({ 
+            error: 'Internal server error',
+            message: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
     }   
-
-}
+};
 
 exports.tripRequest = async (req, res) => {
 
@@ -51,7 +64,7 @@ exports.tripRequest = async (req, res) => {
 
         //receives userID AND tripID
         //sets the userID to the trip request array
-        
+
         const {userID, tripID} = req.body;
 
         const trip = await Trip.findById(tripID);
@@ -69,3 +82,5 @@ exports.tripRequest = async (req, res) => {
     }
 
 }
+
+

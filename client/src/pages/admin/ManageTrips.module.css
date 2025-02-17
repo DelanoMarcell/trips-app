@@ -1,5 +1,6 @@
-.dashboardContainer {
+.mainContainer {
     display: flex;
     min-height: 100vh;
     left: 10;
+    background-color: #f5f6fa;;
   }

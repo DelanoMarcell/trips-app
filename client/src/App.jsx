@@ -11,6 +11,7 @@ import ForgotPassword from './components/auth/forgotPassword'
 import ManageTrips from './pages/admin/ManageTrips';
 import Requests from './pages/admin/TripRequest';
 import ProtectedRoute from './components/ProtectedAdminRoute';
+import TripRequest from './pages/admin/TripRequest';
 import UserDashboard
  from './pages/Users/userDashboard';
 function App() {
@@ -27,7 +28,8 @@ function App() {
         <Route path="/register" element={<Registration />} />
         <Route path="/user-dashboard" element={<UserDashboard />} />
 
-        <Route element={<ProtectedRoute requiredRole="admin" />}>
+        <Route path="/trip-request" element={<TripRequest />} />
+        <Route element={<ProtectedRoute requiredRole="Admin" />}>
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/create-trip" element={<CreateTrip />} />
           <Route path="/manage-trips" element={<ManageTrips />} />
