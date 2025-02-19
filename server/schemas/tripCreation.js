@@ -10,6 +10,7 @@ const TripSchema = new mongoose.Schema({
   seatsAvailable: Number,
   requestToJoin : Array,
   acceptedRequest : Array,
+  status : Array,
 });
 
 module.exports = mongoose.model("Trip", TripSchema);

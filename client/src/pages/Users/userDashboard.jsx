@@ -154,7 +154,7 @@ const UserDashboard = () => {
                     <ListItem>
                       <ListItemText 
                         primary="Price" 
-                        secondary={`${trip.cost}`} 
+                        secondary={`${"R" +trip.cost}`} 
                       />
                     </ListItem>
                     <ListItem>

@@ -17,6 +17,7 @@ exports.createTrip = async (req, res) => {
             seatsAvailable,
             joinRequest,
             acceptedRequest,
+            status : [],
         });
 
         await newTrip.save();
@@ -29,7 +30,6 @@ exports.createTrip = async (req, res) => {
     }
 
 }
-
 
 
 
@@ -92,9 +92,15 @@ exports.tripRequest = async (req, res) => {
         const trip = await Trip.findById(tripID);
         console.log(trip);
 
-        trip.requestToJoin.push(userID);
+        if (trip.requestToJoin.includes(userID)) {
+            // If already added, send an error response
+            console.log("already added");
+            return res.status(400).json({ message: "User has already requested to join this trip." });
+        }
 
-        console.log(trip);
+        trip.requestToJoin.addToSet(userID);
+        trip.status.addToSet("Pending");
+
         await trip.save();
 
         res.send("done");

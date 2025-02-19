@@ -12,23 +12,44 @@ import {
   CircularProgress,
   Box
 } from '@mui/material';
-
+import Cookies from 'js-cookie'
 const RequestedTripsPage = () => {
   const [requestedTrips, setRequestedTrips] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const userEmail = Cookies.get('email');
+  const [statusIDs, setStatusIDs] = useState([]);
+  
+
+  function getStatusIndex(IDs){
+
+    for (let i = 0; i < IDs.length; i++) {
+      if(IDs[i] === userEmail){
+        return i;
+      }
+    }
+    return -1;
+  }
+
 
   // Fetch requested trips
   useEffect(() => {
     const fetchRequestedTrips = async () => {
       try {
-        const userID = 'user123';
+        const userID = Cookies.get("email");
         const response = await fetch(`http://localhost:5000/api/trips/requestedTrips?userID=${userID}`);
         if (!response.ok) {
           throw new Error('Failed to fetch requested trips');
         }
         const data = await response.json();
         setRequestedTrips(data);
+        console.log(data);
+
+        //set the status for all
+
+        for (let x = 0; x < data.lengh ; x++){
+          setStatusIDs(getStatusIndex(x.acceptedRequest));
+        }
       } catch (error) {
         setError(error.message);
       } finally {
@@ -97,7 +118,7 @@ const RequestedTripsPage = () => {
                     <ListItem>
                       <ListItemText 
                         primary="Price" 
-                        secondary={`${trip.cost}`} 
+                        secondary={`${"R"+trip.cost}`} 
                       />
                     </ListItem>
                     <ListItem>
@@ -116,7 +137,7 @@ const RequestedTripsPage = () => {
                                      trip.status === 'rejected' ? 'red' : 'orange'
                             }}
                           >
-                            {trip.status}
+                            {trip.status==null? "Pending" : trip.status}
                           </Typography>
                         } 
                       />
