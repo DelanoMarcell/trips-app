@@ -9,18 +9,29 @@ import {
   ListItem, 
   ListItemText,
   Button,
-  CircularProgress
+  CircularProgress,
+  TextField,
+  Tabs,
+  Tab,
+  Box
 } from '@mui/material';
+import RequestedTripsPage from './RequestedTripsPage';
+import Cookies from 'js-cookie';
 
 const UserDashboard = () => {
-  const [trips, setTrips] = useState([]);
+  const userEmail = Cookies.get('email');
+  const [trips, setTrips] = useState([]); // All trips
+  const [appliedTrips, setAppliedTrips] = useState([]); // Trips applied for
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [searchQuery, setSearchQuery] = useState(''); // Search query
+  const [tabValue, setTabValue] = useState(0); // Tabs for All Trips and Applied Trips
 
+  // Fetch all trips
   useEffect(() => {
     const fetchTrips = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/trips/tripsavailable');
+        const response = await fetch('http://localhost:5000/api/trips/getalltrips');
         if (!response.ok) {
           throw new Error('Failed to fetch trips');
         }
@@ -36,33 +47,59 @@ const UserDashboard = () => {
     fetchTrips();
   }, []);
 
-  const handleJoinRequest = (trip) => {
-
-    const userID = 'user123'; // Replace with actual user ID
-
-    const requestJoinTrip = async () => {
-      try {
-        const response = await fetch('http://localhost:5000/api/trips/tripRequest', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ userID, tripID: trip._id }),
-        });
-
-        if (!response.ok) {
-          throw new Error('Failed to request to join trip');
-        }
-
-        const data = await response.json();
-        console.log('Request successful:', data);
-      } catch (error) {
-        console.error('Error:', error);
+  // Fetch applied trips for the user
+  const fetchAppliedTrips = async () => {
+    try {
+      const userID = userEmail; // Replace with actual user ID
+      const response = await fetch(`http://localhost:5000/api/trips/appliedTrips?userID=${userID}`);
+      if (!response.ok) {
+        throw new Error('Failed to fetch applied trips');
       }
-    };
+      const data = await response.json();
+      setAppliedTrips(data);
+    } catch (error) {
+      console.error('Error fetching applied trips:', error);
+    }
+  };
 
-    requestJoinTrip();
+  // Handle join request
+  const handleJoinRequest = async (trip) => {
+    const userID = userEmail;
 
+    try {
+      const response = await fetch('http://localhost:5000/api/trips/tripRequest', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ userID, tripID: trip._id }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to request to join trip');
+      }
+
+      const data = await response.json();
+      console.log('Request successful:', data);
+      fetchAppliedTrips(); // Refresh applied trips after joining
+    } catch (error) {
+      console.error('Error:', error);
+    }
+  };
+
+  // Filter trips based on search query
+  const filteredTrips = trips.filter((trip) =>
+    trip.tripName.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    trip.from.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    trip.to.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Handle tab change
+  const handleTabChange = (event, newValue) => {
+    setTabValue(newValue);
+    if (newValue === 1) {
+      fetchAppliedTrips(); // Fetch applied trips when the tab is switched
+    }
   };
 
   if (isLoading) {
@@ -83,40 +120,102 @@ const UserDashboard = () => {
 
   return (
     <Container style={{ minHeight: '100vh', paddingTop: '24px', paddingBottom: '24px' }}>
+      {/* Tabs for All Trips and Applied Trips */}
+      <Tabs value={tabValue} onChange={handleTabChange} centered>
+        <Tab label="All Trips" />
+        <Tab label="Applied Trips" />
+      </Tabs>
+
+      {/* Search Bar (Only for All Trips tab) */}
+      {tabValue === 0 && (
+        <Box sx={{ my: 3 }}>
+          <TextField
+            fullWidth
+            variant="outlined"
+            placeholder="Search trips by name, origin, or destination"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+        </Box>
+      )}
+
+      {/* Display Trips */}
       <Grid container spacing={3}>
-        {trips.map((trip) => (
-          <Grid item xs={12} sm={6} md={4} key={trip._id}>
-            <Card>
-              <CardContent>
-                <Typography variant="h6" gutterBottom>
-                  {trip.from} to {trip.to}
-                </Typography>
-                <List>
-                  <ListItem>
-                    <ListItemText 
-                      primary="Price" 
-                      secondary={`$${trip.price}`} 
-                    />
-                  </ListItem>
-                  <ListItem>
-                    <ListItemText 
-                      primary="Seats Available" 
-                      secondary={trip.seatsAvailable} 
-                    />
-                  </ListItem>
-                </List>
-                <Button 
-                  variant="contained" 
-                  color="primary"
-                  fullWidth
-                  onClick={() => handleJoinRequest(trip)}
-                >
-                  Request to Join
-                </Button>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
+        {tabValue === 0 ? (
+          // All Trips
+          filteredTrips.map((trip) => (
+            <Grid item xs={12} sm={6} md={4} key={trip._id}>
+              <Card>
+                <CardContent>
+                  <Typography variant="h6" gutterBottom>
+                    {trip.from} to {trip.to}
+                  </Typography>
+                  <List>
+                    <ListItem>
+                      <ListItemText 
+                        primary="Price" 
+                        secondary={`${trip.cost}`} 
+                      />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemText 
+                        primary="Seats Available" 
+                        secondary={trip.seatsAvailable} 
+                      />
+                    </ListItem>
+                    <ListItem>
+                      <ListItemText 
+                        primary="Departure" 
+                        secondary={new Date(trip.departure).toLocaleString()} 
+                      />
+                    </ListItem>
+                  </List>
+                  <Button 
+                    variant="contained" 
+                    color="primary"
+                    fullWidth
+                    onClick={() => handleJoinRequest(trip)}
+                  >
+                    Request to Join
+                  </Button>
+                </CardContent>
+              </Card>
+            </Grid>
+          ))
+        ) : (
+          // Applied Trips
+          appliedTrips.length > 0 ? (
+            appliedTrips.map((trip) => (
+              <Grid item xs={12} sm={6} md={4} key={trip._id}>
+                <Card>
+                  <CardContent>
+                    <Typography variant="h6" gutterBottom>
+                      {trip.from} to {trip.to}
+                    </Typography>
+                    <List>
+                      <ListItem>
+                        <ListItemText 
+                          primary="Price" 
+                          secondary={`$${trip.cost}`} 
+                        />
+                      </ListItem>
+                      <ListItem>
+                        <ListItemText 
+                          primary="Departure" 
+                          secondary={new Date(trip.departure).toLocaleString()} 
+                        />
+                      </ListItem>
+                    </List>
+                  </CardContent>
+                </Card>
+              </Grid>
+            ))
+          ) : (
+            <Typography variant="body1" sx={{ mt: 3 }}>
+              <RequestedTripsPage/>
+            </Typography>
+          )
+        )}
       </Grid>
     </Container>
   );

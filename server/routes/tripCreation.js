@@ -8,6 +8,7 @@ router.get("/tripsavailable", (req, res) => tripCreationController.tripsavailabl
 router.post("/triprequest", (req, res) => tripCreationController.tripRequest(req, res));
 router.get("/trisummary", (req, res) => tripCreationController.tripsummary(req, res));
 router.get("/trireqsummary", (req, res) => tripCreationController.tripreqsummary(req, res));
-
+router.get("/getalltrips", (req, res) => tripCreationController.getalltrips(req, res));
+router.get("/requestedtrips", (req, res) => tripCreationController.requestedTrips(req, res));
 
 module.exports = router;

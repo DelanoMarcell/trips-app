@@ -32,6 +32,8 @@ exports.createTrip = async (req, res) => {
 
 
 
+
+//get trips beloging to a specific admin
 exports.tripsavailable = async (req, res) => {
     try {
         const admin = req.query.admin;
@@ -57,6 +59,26 @@ exports.tripsavailable = async (req, res) => {
         });
     }   
 };
+
+
+//get all the trips
+exports.getalltrips = async (req, res) => {
+    try {
+        const trips = await Trip.find()
+            .select('-__v')  
+            .sort({ date: 1 });  
+
+        res.json(trips);
+    } catch (error) {
+        console.error('Error fetching all trips:', error);
+        res.status(500).json({ 
+            error: 'Internal server error',
+            message: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
+    }   
+};
+
+
 
 exports.tripRequest = async (req, res) => {
 
@@ -84,3 +106,23 @@ exports.tripRequest = async (req, res) => {
 }
 
 
+
+exports.requestedTrips = async (req, res) => {
+    try {
+        const userID = req.query.userID;
+
+        const trips = await Trip.find({ 
+            requestToJoin: { $in: [userID] } // Check if userID is in the requestToJoin array
+        }).select('-__v')  
+          .sort({ date: 1 });  
+
+        res.json(trips);
+
+    } catch (error) {
+        console.error('Error fetching trips:', error);
+        res.status(500).json({ 
+            error: 'Internal server error',
+            message: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
+    }   
+};
