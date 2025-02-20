@@ -31,7 +31,7 @@ const UserDashboard = () => {
   useEffect(() => {
     const fetchTrips = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/trips/getalltrips');
+        const response = await fetch('/api/trips/getalltrips');
         if (!response.ok) {
           throw new Error('Failed to fetch trips');
         }
@@ -51,7 +51,7 @@ const UserDashboard = () => {
   const fetchAppliedTrips = async () => {
     try {
       const userID = userEmail;
-      const response = await fetch(`http://localhost:5000/api/trips/appliedTrips?userID=${userID}`);
+      const response = await fetch(`/api/trips/appliedTrips?userID=${userID}`);
       if (!response.ok) {
         throw new Error('Failed to fetch applied trips');
       }
@@ -72,7 +72,7 @@ const UserDashboard = () => {
     const userID = userEmail;
 
     try {
-      const response = await fetch('http://localhost:5000/api/trips/tripRequest', {
+      const response = await fetch('/api/trips/tripRequest', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
