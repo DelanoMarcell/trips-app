@@ -73,7 +73,7 @@ async function connectToDatabase() {
 async function startServer() {
   await connectToDatabase(); // Connect to the database
   app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Server running on port ${PORT}`);
   });
 }
 

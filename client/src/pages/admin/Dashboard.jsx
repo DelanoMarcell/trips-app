@@ -13,7 +13,7 @@ function Dashboard() {
   // Function to fetch active rides and process join requests
   async function fetchData() {
     try {
-      const response = await fetch(`http://localhost:5000/api/trips/tripsavailable?admin=${adminKey}`);
+      const response = await fetch(`/api/trips/tripsavailable?admin=${adminKey}`);
       if (!response.ok) {
         throw new Error('Failed to fetch trips');
       }

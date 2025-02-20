@@ -10,13 +10,13 @@ function TripRequest() {
 
     useEffect(() => {
         // Fetch trips with join requests
-        fetch('http://localhost:5000/api/trips/getalltrips')
+        fetch('/api/trips/getalltrips')
             .then(response => response.json())
             .then(data => setTrips(data))
             .catch(error => console.error('Error fetching trips:', error));
 
         // Fetch all users
-        fetch('http://localhost:5000/api/trips/getAllUsers')
+        fetch('api/trips/getAllUsers')
             .then(response => response.json())
             .then(data => setUsers(data))
             .catch(error => console.error('Error fetching users:', error));
@@ -48,7 +48,7 @@ function TripRequest() {
       
     const handleAccept = (tripId, email) => {
         // API call to accept request
-        fetch(`http://localhost:5000/api/trips/${tripId}/accept-request`, {
+        fetch(`/api/trips/${tripId}/accept-request`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email })
@@ -73,7 +73,7 @@ function TripRequest() {
 
     const handleReject = (tripId, email) => {
         // API call to reject request
-        fetch(`http://localhost:5000/api/trips/${tripId}/reject-request`, {
+        fetch(`/api/trips/${tripId}/reject-request`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email })

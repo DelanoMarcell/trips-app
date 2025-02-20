@@ -31,7 +31,7 @@ const TripsManagement = () => {
     const fetchTrips = async () => {
       try {
         const response = await fetch(
-          `http://localhost:5000/api/trips/tripsavailable?admin=${adminKey}`
+          `/api/trips/tripsavailable?admin=${adminKey}`
         );
         if (!response.ok) throw new Error('Failed to fetch trips');
         const data = await response.json();
@@ -68,7 +68,7 @@ const TripsManagement = () => {
   
     try {
       const adminKey = Cookies.get('email');
-      const response = await fetch(`http://localhost:5000/api/trips/updatetrips/${editingId}`, {
+      const response = await fetch(`/api/trips/updatetrips/${editingId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

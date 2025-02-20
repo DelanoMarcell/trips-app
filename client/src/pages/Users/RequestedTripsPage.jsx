@@ -24,7 +24,7 @@ const RequestedTripsPage = () => {
     const fetchRequestedTrips = async () => {
       try {
         const userID = Cookies.get("email");
-        const response = await fetch(`http://localhost:5000/api/trips/requestedTrips?userID=${userID}`);
+        const response = await fetch(`/api/trips/requestedTrips?userID=${userID}`);
         if (!response.ok) {
           throw new Error('Failed to fetch requested trips');
         }
@@ -45,7 +45,7 @@ const RequestedTripsPage = () => {
   const handleCancelRequest = async (tripID) => {
     try {
       const userID = Cookies.get('email'); // Use the actual user email
-      const response = await fetch('http://localhost:5000/api/trips/cancelRequest', {
+      const response = await fetch('/api/trips/cancelRequest', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
