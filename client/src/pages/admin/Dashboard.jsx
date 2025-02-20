@@ -106,43 +106,7 @@ function Dashboard() {
           </div>
 
           {/* Join Requests Section */}
-          <div className={styles.section}>
-            <h2><FiUser /> Join Requests</h2>
-            <div className={styles.requestsList}>
-              {joinRequests.length > 0 ? (
-                joinRequests.map(request => (
-                  <div key={request.id} className={styles.requestCard}>
-                    <div className={styles.requestHeader}>
-                      <FiUser className={styles.userIcon} />
-                      <div>
-                        <h3>{request.user}</h3>
-                        <p><FiMail /> {request.email}</p>
-                      </div>
-                    </div>
-                    <div className={styles.rideReference}>
-                      Requesting ride #{request.rideId}
-                    </div>
-                    <div className={styles.actionButtons}>
-                      <button 
-                        onClick={() => handleRequestAction(request.id, 'accept')}
-                        className={styles.acceptButton}
-                      >
-                        Accept
-                      </button>
-                      <button
-                        onClick={() => handleRequestAction(request.id, 'decline')}
-                        className={styles.declineButton}
-                      >
-                        Decline
-                      </button>
-                    </div>
-                  </div>
-                ))
-              ) : (
-                <p>No pending join requests.</p>
-              )}
-            </div>
-          </div>
+       
         </div>
       </main>
     </div>

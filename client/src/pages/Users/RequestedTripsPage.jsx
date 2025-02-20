@@ -10,29 +10,16 @@ import {
   ListItemText,
   Button,
   CircularProgress,
-  Box
 } from '@mui/material';
-import Cookies from 'js-cookie'
+import Cookies from 'js-cookie';
+
 const RequestedTripsPage = () => {
   const [requestedTrips, setRequestedTrips] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const userEmail = Cookies.get('email');
-  const [statusIDs, setStatusIDs] = useState([]);
-  
 
-  function getStatusIndex(IDs){
-
-    for (let i = 0; i < IDs.length; i++) {
-      if(IDs[i] === userEmail){
-        return i;
-      }
-    }
-    return -1;
-  }
-
-
-  // Fetch requested trips
+  // Fetch requested trips when the component mounts
   useEffect(() => {
     const fetchRequestedTrips = async () => {
       try {
@@ -44,12 +31,6 @@ const RequestedTripsPage = () => {
         const data = await response.json();
         setRequestedTrips(data);
         console.log(data);
-
-        //set the status for all
-
-        for (let x = 0; x < data.lengh ; x++){
-          setStatusIDs(getStatusIndex(x.acceptedRequest));
-        }
       } catch (error) {
         setError(error.message);
       } finally {
@@ -63,7 +44,7 @@ const RequestedTripsPage = () => {
   // Handle cancel request
   const handleCancelRequest = async (tripID) => {
     try {
-      const userID = 'user123'; // Replace with actual user ID
+      const userID = Cookies.get('email'); // Use the actual user email
       const response = await fetch('http://localhost:5000/api/trips/cancelRequest', {
         method: 'POST',
         headers: {
@@ -107,56 +88,71 @@ const RequestedTripsPage = () => {
       </Typography>
       <Grid container spacing={3}>
         {requestedTrips.length > 0 ? (
-          requestedTrips.map((trip) => (
-            <Grid item xs={12} sm={6} md={4} key={trip._id}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    {trip.from} to {trip.to}
-                  </Typography>
-                  <List>
-                    <ListItem>
-                      <ListItemText 
-                        primary="Price" 
-                        secondary={`${"R"+trip.cost}`} 
-                      />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemText 
-                        primary="Departure" 
-                        secondary={new Date(trip.departure).toLocaleString()} 
-                      />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemText 
-                        primary="Status" 
-                        secondary={
-                          <Typography 
-                            style={{
-                              color: trip.status === 'accepted' ? 'green' : 
-                                     trip.status === 'rejected' ? 'red' : 'orange'
-                            }}
-                          >
-                            {trip.status==null? "Pending" : trip.status}
-                          </Typography>
-                        } 
-                      />
-                    </ListItem>
-                  </List>
-                  {trip.status === 'pending' && (
-                    <Button 
-                      variant="contained" 
-                      color="secondary"
-                      fullWidth
-                      onClick={() => handleCancelRequest(trip._id)}
-                    >
-                      Cancel Request
-                    </Button>
-                  )}
-                </CardContent>
-              </Card>
-            </Grid>
-          ))
+          requestedTrips.map((trip) => {
+            // Determine the status dynamically:
+            // 1. If the user's email is in acceptedRequest, status is "accepted"
+            // 2. Else if it's in rejectedRequest, status is "rejected"
+            // 3. Otherwise, default to the status from the trip data (or "pending")
+            const updatedStatus = trip.acceptedRequest.includes(userEmail)
+              ? "accepted"
+              : trip.rejectedRequest && trip.rejectedRequest.includes(userEmail)
+              ? "rejected"
+              : (trip.status && trip.status[0] ? trip.status[0].toLowerCase() : "pending");
+
+            return (
+              <Grid item xs={12} sm={6} md={4} key={trip._id}>
+                <Card>
+                  <CardContent>
+                    <Typography variant="h6" gutterBottom>
+                      {trip.from} to {trip.to}
+                    </Typography>
+                    <List>
+                      <ListItem>
+                        <ListItemText 
+                          primary="Price" 
+                          secondary={`R${trip.cost}`} 
+                        />
+                      </ListItem>
+                      <ListItem>
+                        <ListItemText 
+                          primary="Departure" 
+                          secondary={new Date(trip.departure).toLocaleString()} 
+                        />
+                      </ListItem>
+                      <ListItem>
+                        <ListItemText 
+                          primary="Status" 
+                          secondary={
+                            <Typography 
+                              style={{
+                                color: updatedStatus === 'accepted'
+                                  ? 'green'
+                                  : updatedStatus === 'rejected'
+                                  ? 'red'
+                                  : 'orange'
+                              }}
+                            >
+                              {updatedStatus}
+                            </Typography>
+                          } 
+                        />
+                      </ListItem>
+                    </List>
+                    {updatedStatus === 'pending' && (
+                      <Button 
+                        variant="contained" 
+                        color="secondary"
+                        fullWidth
+                        onClick={() => handleCancelRequest(trip._id)}
+                      >
+                        Cancel Request
+                      </Button>
+                    )}
+                  </CardContent>
+                </Card>
+              </Grid>
+            );
+          })
         ) : (
           <Typography variant="body1" sx={{ mt: 3 }}>
             You haven't requested to join any trips yet.

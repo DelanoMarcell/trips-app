@@ -21,7 +21,7 @@ import Cookies from 'js-cookie';
 const UserDashboard = () => {
   const userEmail = Cookies.get('email');
   const [trips, setTrips] = useState([]); // All trips
-  const [appliedTrips, setAppliedTrips] = useState([]); // Trips applied for
+  const [appliedTrips, setAppliedTrips] = useState([]); // Trips applied for (fetched from backend)
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchQuery, setSearchQuery] = useState(''); // Search query
@@ -47,10 +47,10 @@ const UserDashboard = () => {
     fetchTrips();
   }, []);
 
-  // Fetch applied trips for the user
+  // Fetch applied trips for the user from backend (if you need additional data)
   const fetchAppliedTrips = async () => {
     try {
-      const userID = userEmail; // Replace with actual user ID
+      const userID = userEmail;
       const response = await fetch(`http://localhost:5000/api/trips/appliedTrips?userID=${userID}`);
       if (!response.ok) {
         throw new Error('Failed to fetch applied trips');
@@ -61,6 +61,11 @@ const UserDashboard = () => {
       console.error('Error fetching applied trips:', error);
     }
   };
+
+  // Fetch applied trips on mount so we know which trips the user has applied for
+  useEffect(() => {
+    fetchAppliedTrips();
+  }, []);
 
   // Handle join request
   const handleJoinRequest = async (trip) => {
@@ -98,7 +103,7 @@ const UserDashboard = () => {
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
     if (newValue === 1) {
-      fetchAppliedTrips(); // Fetch applied trips when the tab is switched
+      fetchAppliedTrips(); // Fetch applied trips when switching tabs
     }
   };
 
@@ -143,45 +148,62 @@ const UserDashboard = () => {
       <Grid container spacing={3}>
         {tabValue === 0 ? (
           // All Trips
-          filteredTrips.map((trip) => (
-            <Grid item xs={12} sm={6} md={4} key={trip._id}>
-              <Card>
-                <CardContent>
-                  <Typography variant="h6" gutterBottom>
-                    {trip.from} to {trip.to}
-                  </Typography>
-                  <List>
-                    <ListItem>
-                      <ListItemText 
-                        primary="Price" 
-                        secondary={`${"R" +trip.cost}`} 
-                      />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemText 
-                        primary="Seats Available" 
-                        secondary={trip.seatsAvailable} 
-                      />
-                    </ListItem>
-                    <ListItem>
-                      <ListItemText 
-                        primary="Departure" 
-                        secondary={new Date(trip.departure).toLocaleString()} 
-                      />
-                    </ListItem>
-                  </List>
-                  <Button 
-                    variant="contained" 
-                    color="primary"
-                    fullWidth
-                    onClick={() => handleJoinRequest(trip)}
-                  >
-                    Request to Join
-                  </Button>
-                </CardContent>
-              </Card>
-            </Grid>
-          ))
+          filteredTrips.map((trip) => {
+            // Check if the user's email is in requestToJoin, acceptedRequest, or rejectedRequest arrays.
+            const alreadyApplied = trip.requestToJoin.includes(userEmail) ||
+                                   trip.acceptedRequest.includes(userEmail) ||
+                                   (trip.rejectedRequest && trip.rejectedRequest.includes(userEmail));
+            return (
+              <Grid item xs={12} sm={6} md={4} key={trip._id}>
+                <Card>
+                  <CardContent>
+                    <Typography variant="h6" gutterBottom>
+                      {trip.from} to {trip.to}
+                    </Typography>
+                    <List>
+                      <ListItem>
+                        <ListItemText 
+                          primary="Price" 
+                          secondary={`R${trip.cost}`} 
+                        />
+                      </ListItem>
+                      <ListItem>
+                        <ListItemText 
+                          primary="Seats Available" 
+                          secondary={trip.seatsAvailable} 
+                        />
+                      </ListItem>
+                      <ListItem>
+                        <ListItemText 
+                          primary="Departure" 
+                          secondary={new Date(trip.departure).toLocaleString()} 
+                        />
+                      </ListItem>
+                    </List>
+                    {alreadyApplied ? (
+                      <Button 
+                        variant="contained" 
+                        color="secondary"
+                        fullWidth
+                        disabled
+                      >
+                        Already Applied
+                      </Button>
+                    ) : (
+                      <Button 
+                        variant="contained" 
+                        color="primary"
+                        fullWidth
+                        onClick={() => handleJoinRequest(trip)}
+                      >
+                        Request to Join
+                      </Button>
+                    )}
+                  </CardContent>
+                </Card>
+              </Grid>
+            );
+          })
         ) : (
           // Applied Trips
           appliedTrips.length > 0 ? (
@@ -196,7 +218,7 @@ const UserDashboard = () => {
                       <ListItem>
                         <ListItemText 
                           primary="Price" 
-                          secondary={`$${trip.cost}`} 
+                          secondary={`R${trip.cost}`} 
                         />
                       </ListItem>
                       <ListItem>

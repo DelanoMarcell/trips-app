@@ -10,6 +10,7 @@ const TripSchema = new mongoose.Schema({
   seatsAvailable: Number,
   requestToJoin : Array,
   acceptedRequest : Array,
+  rejectedRequest : Array,
   status : Array,
 });
 

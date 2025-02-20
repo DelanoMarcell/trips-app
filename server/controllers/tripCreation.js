@@ -18,6 +18,7 @@ exports.createTrip = async (req, res) => {
             seatsAvailable,
             joinRequest,
             acceptedRequest,
+            rejectedRequest : [],
             status : [],
         });
 
@@ -119,7 +120,6 @@ exports.acceptRequest = async (req, res) => {
         const updatedTrip = await Trip.findByIdAndUpdate(
             tripId,
             {
-                $pull: { requestToJoin: email },
                 $push: { acceptedRequest: email },
                 $inc: { seatsAvailable: -1 }
             },
@@ -158,7 +158,8 @@ exports.rejectRequest = async (req, res) => {
         const updatedTrip = await Trip.findByIdAndUpdate(
             tripId,
             {
-                $pull: { requestToJoin: email }
+                $push: { rejectedRequest: email },
+
             },
             { new: true }
         );

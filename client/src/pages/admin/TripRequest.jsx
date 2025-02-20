@@ -23,27 +23,29 @@ function TripRequest() {
 
     }, []);
 
-    // Combine trips and users data to get request details
     const getRequests = () => {
-        return trips.flatMap(trip => 
-            trip.requestToJoin.map(requestEmail => {
-                
-                const user = users.find(u => u.email === requestEmail);
-                return {
-                    tripId: trip._id,
-                    email: requestEmail,
-                    name: user ? `${user.name} ${user.surname}` : 'Unknown User',
-                    tripDetails: {
-                        from: trip.from,
-                        to: trip.to,
-                        departure: trip.departure,
-                        cost: trip.cost
-                    }
-                };
-            })
+        return trips.flatMap(trip =>
+            trip.requestToJoin
+                .filter(requestEmail => !trip.acceptedRequest.includes(requestEmail))
+                .filter(requestEmail => !trip.rejectedRequest.includes(requestEmail))
+                .map(requestEmail => {
+                    const user = users.find(u => u.email === requestEmail);
+                    return {
+                        tripId: trip._id,
+                        email: requestEmail,
+                        name: user ? `${user.name} ${user.surname}` : 'Unknown User',
+                        tripDetails: {
+                            from: trip.from,
+                            to: trip.to,
+                            departure: trip.departure,
+                            cost: trip.cost
+                        }
+                    };
+                })
         );
     };
-
+    
+      
     const handleAccept = (tripId, email) => {
         // API call to accept request
         fetch(`http://localhost:5000/api/trips/${tripId}/accept-request`, {
