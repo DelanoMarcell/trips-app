@@ -1,4 +1,5 @@
 const Trip = require('../schemas/tripCreation');
+const User = require("../schemas/user");
 
 exports.createTrip = async (req, res) => {
 
@@ -78,6 +79,103 @@ exports.getalltrips = async (req, res) => {
     }   
 };
 
+// Get all users (excluding sensitive fields)
+exports.getAllUsers = async (req, res) => {
+    try {
+        const users = await User.find()
+            .select('-password -__v -verified') // Exclude sensitive fields
+            .sort({ createdAt: -1 });
+
+        res.json(users);
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        res.status(500).json({
+            error: 'Internal server error',
+            message: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
+    }
+};
+
+// Accept join request
+exports.acceptRequest = async (req, res) => {
+    try {
+        const { tripId } = req.params;
+        const { email } = req.body;
+
+        const trip = await Trip.findById(tripId);
+        if (!trip) {
+            return res.status(404).json({ error: 'Trip not found' });
+        }
+
+        if (!trip.requestToJoin.includes(email)) {
+            return res.status(400).json({ error: 'User not in join requests' });
+        }
+
+        if (trip.seatsAvailable <= 0) {
+            return res.status(400).json({ error: 'No available seats left' });
+        }
+
+        // Update trip document
+        const updatedTrip = await Trip.findByIdAndUpdate(
+            tripId,
+            {
+                $pull: { requestToJoin: email },
+                $push: { acceptedRequest: email },
+                $inc: { seatsAvailable: -1 }
+            },
+            { new: true }
+        );
+
+        res.json({
+            message: 'Request accepted successfully',
+            trip: updatedTrip
+        });
+    } catch (error) {
+        console.error('Error accepting request:', error);
+        res.status(500).json({
+            error: 'Internal server error',
+            message: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
+    }
+};
+
+// Reject join request
+exports.rejectRequest = async (req, res) => {
+    try {
+        const { tripId } = req.params;
+        const { email } = req.body;
+
+        const trip = await Trip.findById(tripId);
+        if (!trip) {
+            return res.status(404).json({ error: 'Trip not found' });
+        }
+
+        if (!trip.requestToJoin.includes(email)) {
+            return res.status(400).json({ error: 'User not in join requests' });
+        }
+
+        // Update trip document
+        const updatedTrip = await Trip.findByIdAndUpdate(
+            tripId,
+            {
+                $pull: { requestToJoin: email }
+            },
+            { new: true }
+        );
+
+        res.json({
+            message: 'Request rejected successfully',
+            trip: updatedTrip
+        });
+    } catch (error) {
+        console.error('Error rejecting request:', error);
+        res.status(500).json({
+            error: 'Internal server error',
+            message: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
+    }
+};
+
 
 
 exports.tripRequest = async (req, res) => {
@@ -131,4 +229,40 @@ exports.requestedTrips = async (req, res) => {
             message: process.env.NODE_ENV === 'development' ? error.message : undefined
         });
     }   
+};
+
+
+exports.updateTrip = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const updates = req.body;
+     
+
+        // Validate allowed updates
+        const allowedUpdates = ['from', 'to', 'departure', 'cost', 'seatsAvailable'];
+        const isValidOperation = Object.keys(updates).every(update => 
+            allowedUpdates.includes(update)
+        );
+
+        if (!isValidOperation) {
+            return res.status(400).json({ error: 'Invalid updates!' });
+        }
+
+        const trip = await Trip.findByIdAndUpdate(id, updates, {
+            new: true,
+            runValidators: true
+        });
+
+        if (!trip) {
+            return res.status(404).json({ error: 'Trip not found' });
+        }
+
+        res.json(trip);
+    } catch (error) {
+        console.error('Error updating trip:', error);
+        res.status(500).json({ 
+            error: 'Internal server error',
+            message: process.env.NODE_ENV === 'development' ? error.message : undefined
+        });
+    }
 };

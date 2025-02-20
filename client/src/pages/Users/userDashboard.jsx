@@ -132,7 +132,7 @@ const UserDashboard = () => {
           <TextField
             fullWidth
             variant="outlined"
-            placeholder="Search trips by name, origin, or destination"
+            placeholder="Search by origin, or destination"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
