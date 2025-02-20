@@ -1,7 +1,4 @@
-# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
-# More GitHub Actions for Azure: https://github.com/Azure/actions
-
-name: Build and deploy Node.js app to Azure Web App - tripsapp
+name: Build and Deploy Node.js App to Azure Web App - tripsapp
 
 on:
   push:
@@ -13,27 +10,37 @@ jobs:
   build:
     runs-on: windows-latest
     permissions:
-      contents: read #This is required for actions/checkout
+      contents: read
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Set up Node.js version
+      - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20.x'
 
-      - name: npm install, build, and test
+      - name: Build Client
+        working-directory: client
         run: |
           npm install
-          npm run build --if-present
-          npm run test --if-present
+          npm run build
       
-      - name: Upload artifact for deployment job
+      - name: Install Server Dependencies
+        working-directory: server
+        run: npm install
+
+      - name: Copy Client Build to Server
+        run: |
+          mkdir -p server/public
+          cp -R client/dist/* server/public/
+      
+      - name: Upload Artifact for Deployment
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: .
+          path: server
 
   deploy:
     runs-on: ubuntu-latest
@@ -41,14 +48,14 @@ jobs:
     environment:
       name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
-    
+
     steps:
-      - name: Download artifact from build job
+      - name: Download Artifact from Build Job
         uses: actions/download-artifact@v4
         with:
           name: node-app
-      
-      - name: 'Deploy to Azure Web App'
+
+      - name: Deploy to Azure Web App
         uses: azure/webapps-deploy@v3
         id: deploy-to-webapp
         with:
