@@ -20,7 +20,7 @@ app.use(
   cors({
     origin: ["http://localhost:5173", "http://localhost:4173"], // Allow requests from Vite
   })
-)
+);
 
 app.use(express.json()); // Parse JSON bodies
 
@@ -40,7 +40,7 @@ if (process.env.NODE_ENV === "production") {
   console.log(
     "Production environment detected. Serving frontend from the build folder."
   );
-  app.use(express.static(path.join(__dirname, "public", "dist")));
+  app.use(express.static(path.join(__dirname, "public")));
 
   // Handle React routing, return all requests to React app
   app.get("*", (req, res) => {
