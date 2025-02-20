@@ -67,7 +67,7 @@ const TripsManagement = () => {
     if (!editingId) return;
   
     try {
-      const adminKey = Cookies.get('adminKey');
+      const adminKey = Cookies.get('email');
       const response = await fetch(`http://localhost:5000/api/trips/updatetrips/${editingId}`, {
         method: 'PUT',
         headers: {

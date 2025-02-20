@@ -25,10 +25,17 @@ function App() {
           <Route path="/forgotpassword" element={<ForgotPassword/>} />
        
 
+
+
         <Route path="/register" element={<Registration />} />
-        <Route path="/register" element={<Registration />} />
+
+
+        <Route element={<ProtectedRoute requiredRole="User" />}>
         <Route path="/user-dashboard" element={<UserDashboard />} />
         <Route path="/requestedtrips" element={<RequestedTrips/>} />
+
+        </Route>
+
 
         <Route path="/trip-request" element={<TripRequest />} />
         <Route element={<ProtectedRoute requiredRole="Admin" />}>
