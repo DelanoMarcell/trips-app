@@ -14,7 +14,7 @@ import {
   LinearProgress
 } from "@mui/material";
 import { LockOutlined, EmailOutlined } from "@mui/icons-material";
-
+import Cookies from 'js-cookie';
 const AuthContainer = ({ children, title }) => (
   <Container
     maxWidth="xs"
@@ -114,7 +114,8 @@ export function Login() {
           document.getElementById("alert").innerHTML = `<p style='padding: 10px; background-color: #e8f5e9; color: #2e7d32; border: 1px solid #a5d6a7; border-radius: 4px;'>Login successful</p>`;
           // Redirect after a brief delay
           setTimeout(() => {
-            navigate("/dashboard");
+            
+            Cookies.get("role") === "Admin" ? navigate("/dashboard") : navigate("/user-dashboard")
           }, 1000);
         }
         setIsLoading(false);

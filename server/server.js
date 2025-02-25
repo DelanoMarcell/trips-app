@@ -15,11 +15,13 @@ const PORT = process.env.PORT || 5000;
 // ======================
 // 2. Middleware Setup
 // ======================
+
 app.use(
   cors({
-    origin: "http://localhost:5173", // Allow requests from Vite
+    origin: ["http://localhost:5173", "http://localhost:4173"], // Allow requests from Vite
   })
-);
+)
+
 app.use(express.json()); // Parse JSON bodies
 
 // ======================
@@ -38,11 +40,11 @@ if (process.env.NODE_ENV === "production") {
   console.log(
     "Production environment detected. Serving frontend from the build folder."
   );
-  app.use(express.static(path.join(__dirname, "/public")));
+  app.use(express.static(path.join(__dirname, "public", "dist")));
 
   // Handle React routing, return all requests to React app
   app.get("*", (req, res) => {
-    return res.sendFile(path.join(__dirname, "../client/dist", "index.html"));
+    return res.sendFile(path.resolve(__dirname, "public", "index.html"));
   });
 }
 
