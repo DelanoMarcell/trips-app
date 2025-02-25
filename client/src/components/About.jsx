@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 function About() {
     const navigate = useNavigate(); 
 
-
+//comeng
 
     console.log("About running");
     async function getData() {

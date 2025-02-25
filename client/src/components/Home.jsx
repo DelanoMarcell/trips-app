@@ -7,6 +7,6 @@ function Home() {
 <button onClick={() => navigate('/about')}>Go to About</button>
     );
   }
-  
+  //coent
 
 export default Home;
